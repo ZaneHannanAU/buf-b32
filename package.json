@@ -1,0 +1,23 @@
+{
+  "name": "buf-b32",
+  "version": "1.0.0",
+  "description": "base32 to buffer and buffer to base32 conversions.",
+  "main": "b32.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZaneHannanAU/buff-b32.git"
+  },
+  "keywords": [
+    "buffer",
+    "base32"
+  ],
+  "author": "zeen3",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ZaneHannanAU/buff-b32/issues"
+  },
+  "homepage": "https://github.com/ZaneHannanAU/buff-b32#readme"
+}
