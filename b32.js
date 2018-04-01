@@ -1,13 +1,15 @@
 
 const {b32c, b256} = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567').reduce((o,c,i)=>{
-	o.b32c[c] = i;
-	o.b32c[c.codePointAt(0)] = i;
-	o.b256[i] = c.codePointAt(0);
+	o.b32c[c.toLowerCase()] = i; // lowercase
+	o.b32c[c.toUpperCase()] = i; // uppercase
+	o.b32c[c.codePointAt(0)] = i;// numercase
+	o.b256[i] = c.codePointAt(0);// binarcase
 	return o;
 }, {b32c: {}, b256: Buffer.alloc(33)})
 // console.log(b32c, c32b)
 
-const xb = {'0':0,'6':1,'4':2,'3':3,'1':4}
+// equals:  0, 1,   2, 3, 4,   5, 6,   7
+const xb = [0, 4, NaN, 3, 2, NaN, 1, NaN]
 
 const b32_buf = B32 => {
 	let v1, v2, v3, v4, v5, v6, v7, v8,
