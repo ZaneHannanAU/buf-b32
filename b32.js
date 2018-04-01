@@ -185,6 +185,8 @@ const buf_b32 = buf => {
 module.exports = {
 	b32_buf,
 	buf_b32,
+	encode: buf_b32,
+	decode: b32_buf,
 	constants: {
 		get b32c() {return {...b32c};},
 		get c32b() {return {...c32b};},
