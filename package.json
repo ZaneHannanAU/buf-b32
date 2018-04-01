@@ -1,6 +1,6 @@
 {
   "name": "buf-b32",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "base32 to buffer and buffer to base32 conversions.",
   "main": "b32.js",
   "scripts": {
@@ -14,7 +14,11 @@
     "buffer",
     "base32"
   ],
-  "files":["b32.js","test.js","README.md"],
+  "files": [
+    "b32.js",
+    "test.js",
+    "README.md"
+  ],
   "author": "zeen3",
   "license": "GPL-3.0",
   "bugs": {
