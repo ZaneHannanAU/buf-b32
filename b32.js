@@ -5,7 +5,7 @@ const {b32c, b256} = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567').reduce((o,c,
 	o.b32c[c.codePointAt(0)] = i;// numercase
 	o.b256[i] = c.codePointAt(0);// binarcase
 	return o;
-}, {b32c: {}, b256: Buffer.alloc(33)})
+}, {b32c: {}, b256: Buffer.allocUnsafe(32)})
 // console.log(b32c, c32b)
 
 // equals:  0, 1,   2, 3, 4,   5, 6,   7

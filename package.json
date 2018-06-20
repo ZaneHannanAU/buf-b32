@@ -2,9 +2,10 @@
   "name": "buf-b32",
   "version": "1.1.0",
   "description": "base32 to buffer and buffer to base32 conversions.",
-  "main": "b32.js",
+  "main": "dist/b32.js",
+  "types": "dist/b32.d.ts",
   "scripts": {
-    "test": "node test.js"
+    "test": "node dist/test"
   },
   "repository": {
     "type": "git",
@@ -15,7 +16,8 @@
     "base32"
   ],
   "files": [
-    "b32.js",
+    "dist/b32.js",
+    "dist/b32.d.ts",
     "test.js",
     "README.md"
   ],
@@ -24,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/ZaneHannanAU/buf-b32/issues"
   },
-  "homepage": "https://github.com/ZaneHannanAU/buf-b32#readme"
+  "homepage": "https://github.com/ZaneHannanAU/buf-b32#readme",
+  "devDependencies": {
+    "@types/node": "^10.3.4"
+  }
 }
