@@ -1,5 +1,5 @@
 declare const b32c: {
-    [key: string]: number;
+    [key: number]: number;
 };
 declare const xb: number[];
 declare function b32_buf(b32: ArrayBufferView | string, overwrite?: boolean): Uint8Array;

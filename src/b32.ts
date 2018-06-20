@@ -3,7 +3,7 @@
  * @enum b32c {number}
  * maps code points to numbers
  */
-const b32c:{[key: string]: number} = {
+const b32c:{[key: number]: number} = {
 	// 2..7
 	'50': 26,
 	'51': 27,
