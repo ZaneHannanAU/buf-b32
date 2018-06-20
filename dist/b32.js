@@ -64,7 +64,7 @@ const b32c = {
 exports.b32c = b32c;
 const xb = [0, 4, NaN, 3, 2, NaN, 1, NaN];
 exports.xb = xb;
-function b32_buf(b32, overwrite = false) {
+const b32_buf = (b32, overwrite = false) => {
     if (overwrite && 'object' !== typeof b32 && !ArrayBuffer.isView(b32))
         throw new TypeError(`b32_buf option 'overwrite' cannot be used when b32 is not an ArrayBufferView`);
     const v = new Uint8Array(8), B32 = ('string' === typeof b32
@@ -75,7 +75,7 @@ function b32_buf(b32, overwrite = false) {
         ? B32.indexOf(0x3D, 0)
         : B32.indexOf('=', 0)
         : B32.length, cnt = len & -8, rem = len - cnt, bLen = 5 * (len >>> 3) + xb[B32.length - len], buf = (overwrite && 'string' !== typeof b32
-        ? new Uint8Array(b32.buffer, b32.byteOffset, b32.byteLength)
+        ? new Uint8Array(b32.buffer, b32.byteOffset, bLen)
         : new Uint8Array(bLen)), getB32 = 'string' !== typeof B32
         ? (n) => B32[n]
         : (n) => Number(B32.codePointAt(n));
@@ -135,12 +135,12 @@ function b32_buf(b32, overwrite = false) {
             break;
     }
     return buf;
-}
+};
 exports.b32_buf = b32_buf;
 exports.decode = b32_buf;
 const b256 = new Uint8Array([65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 50, 51, 52, 53, 54, 55]);
 exports.b256 = b256;
-function buf_b32(bv, useString = false) {
+const buf_b32 = (bv, useString = false) => {
     const v = new Uint8Array(5), buf = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength), len = buf.length, cnt = Math.floor(len / 5) * 5, rem = len - cnt, bLen = 8 * Math.ceil(buf.length / 5), b32 = new Uint8Array(bLen);
     let i = 0, idx = 0, n = 0;
     while (i < cnt) {
@@ -215,7 +215,7 @@ function buf_b32(bv, useString = false) {
         return String.fromCodePoint(...b32);
     else
         return b32;
-}
+};
 exports.buf_b32 = buf_b32;
 exports.encode = buf_b32;
 //# sourceMappingURL=b32.js.map

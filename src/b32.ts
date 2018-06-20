@@ -73,10 +73,15 @@ const b32c:{[key: number]: number} = {
 // buffered for      0  1    2  3  4    5  6    7
 const xb:number[] = [0, 4, NaN, 3, 2, NaN, 1, NaN]
 
-function b32_buf(
+interface call_b32_buf {
+	(b32: ArrayBufferView): Uint8Array;
+	(b32: string): Uint8Array;
+	(b32: string, overwrite: false): Uint8Array;
+}
+const b32_buf: call_b32_buf = (
 	b32: ArrayBufferView | string,
 	overwrite:boolean = false
-):Uint8Array {
+):Uint8Array => {
 	if (overwrite && 'object' !== typeof b32 && !ArrayBuffer.isView(b32))
 		throw new TypeError(`b32_buf option 'overwrite' cannot be used when b32 is not an ArrayBufferView`)
 
@@ -99,7 +104,7 @@ function b32_buf(
 		bLen:number = 5 * (len >>> 3) + xb[B32.length - len],
 		buf:Uint8Array = (
 			overwrite && 'string' !== typeof b32
-			? new Uint8Array(b32.buffer, b32.byteOffset, b32.byteLength)
+			? new Uint8Array(b32.buffer, b32.byteOffset, bLen)
 			: new Uint8Array(bLen)
 		),
 		getB32 = 'string' !== typeof B32
@@ -179,10 +184,15 @@ function b32_buf(
 // A..Z; 2..7
 const b256:Uint8Array = new Uint8Array([65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,50,51,52,53,54,55])
 
-function buf_b32(
+interface call_buf_b32 {
+	(bv: ArrayBufferView): Uint8Array;
+	(bv: ArrayBufferView, useString: false): Uint8Array;
+	(bv: ArrayBufferView, useString: true): string;
+}
+const buf_b32: call_buf_b32 = (
 	bv: ArrayBufferView,
-	useString:boolean = false
-):Uint8Array | string {
+	useString: boolean = false
+):any => {
 	const v:Uint8Array = new Uint8Array(5),
 		buf:Uint8Array = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength),
 		len:number = buf.length,
