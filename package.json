@@ -17,9 +17,14 @@
     "base32"
   ],
   "files": [
+    "dist/b32.mjs",
     "dist/b32.js",
+    "dist/b32.mjs.map",
+    "dist/b32.js.map",
     "dist/b32.d.ts",
-    "test.js",
+    "dist/test.mjs.map",
+    "dist/test.js.map",
+    "dist/test.d.ts",
     "README.md"
   ],
   "author": "zeen3",

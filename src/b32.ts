@@ -73,6 +73,7 @@ const b32c:Readonly<{[key: number]: number}> = Object.freeze({
 const xb:ReadonlyArray<number> = Object.freeze([0, 4, NaN, 3, 2, NaN, 1, NaN])
 
 const v = new Uint8Array(8)
+const _v = new Uint32Array(v.buffer, v.byteOffset, 2)
 
 interface call_b32_buf {
 	(b32: ArrayBufferView): Uint8Array;
@@ -176,6 +177,8 @@ const b32_buf: call_b32_buf = (
 
 			break
 	}
+	_v[0] = 0
+	_v[1] = 0
 	return buf
 }
 
@@ -290,6 +293,8 @@ const buf_b32: call_buf_b32 = (
 
 			break
 	}
+	_v[0] = 0
+	_v[1] = 0
 	if (useString) return b32_toString(b32)
 	else return b32
 }
