@@ -2,7 +2,7 @@
 DIST_FOLDER=dist
 ESNEXT_EXTENSION=mjs
 
-all: esnext umd .mkln
+all: esnext umd autodefine .mkln
 
 esnext:
 	tsc -t ESNext -m ESNext
@@ -16,6 +16,14 @@ esnext:
 		mv "$$v" "$$(dirname "$$v")/$$(basename "$$v" .js).$(ESNEXT_EXTENSION)" ; done
 	for v in $(DIST_FOLDER)/*.js.map; do \
 		mv "$$v" "$$(dirname "$$v")/$$(basename "$$v" .js.map).$(ESNEXT_EXTENSION).map" ; done
+
+
+autodefine:
+	for v in $(DIST_FOLDER)/**.js; do \
+		sed \
+			-e "s/define(/define('$$(basename $$v '.js')', /g" \
+			-i "$$v"; \
+			done
 
 umd:
 	tsc -m umd -t ES2017
