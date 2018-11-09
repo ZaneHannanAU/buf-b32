@@ -35,19 +35,20 @@ interface call_b32_buf {
 }
 const getB32S = (s: string, n: number) => s.codePointAt(n) || 0
 const getB32B = (b: Uint8Array, n: number) => b[n] || 0
+const {floor, ceil} = Math
 const b32_buf: call_b32_buf = (
 	b32: ArrayBufferView | string,
-	overwrite:boolean = false
-):Uint8Array => {
+	overwrite = false
+): Uint8Array => {
 	if (overwrite && 'object' !== typeof b32 && !ArrayBuffer.isView(b32))
 		throw new TypeError(`b32_buf option 'overwrite' cannot be used when b32 is not an ArrayBufferView`)
 
-	const B32:Uint8Array|string = (
+	const B32: Uint8Array | string = (
 			'string' === typeof b32
 			? b32
 			: new Uint8Array(b32.buffer, b32.byteOffset, b32.byteLength)
 		),
-		len:number = (
+		len = (
 			ArrayBuffer.isView(B32)
 			? B32.lastIndexOf(0x3D, B32.length - 1) > -1
 			: B32.lastIndexOf('=', B32.length - 1) > -1
@@ -55,10 +56,10 @@ const b32_buf: call_b32_buf = (
 			? B32.indexOf(0x3D, 0)
 			: B32.indexOf('=', 0)
 		: B32.length,
-		cnt:number = len & -8,
-		rem:number = len - cnt,
-		bLen:number = 5 * (len >>> 3) + xb[B32.length - len],
-		buf:Uint8Array = (
+		cnt = len & -8,
+		rem = len - cnt,
+		bLen = 5 * (len >>> 3) + xb[B32.length - len],
+		buf = (
 			overwrite && 'string' !== typeof b32
 			? new Uint8Array(b32.buffer, b32.byteOffset, bLen)
 			: new Uint8Array(bLen)
@@ -69,14 +70,14 @@ const b32_buf: call_b32_buf = (
 
 	// 8 chars = 5 bytes
 	while (i < cnt) {
-		v[0] = <number>(b32c[getB32(i++)])
-		v[1] = <number>(b32c[getB32(i++)])
-		v[2] = <number>(b32c[getB32(i++)])
-		v[3] = <number>(b32c[getB32(i++)])
-		v[4] = <number>(b32c[getB32(i++)])
-		v[5] = <number>(b32c[getB32(i++)])
-		v[6] = <number>(b32c[getB32(i++)])
-		v[7] = <number>(b32c[getB32(i++)])
+		v[0] = b32c[getB32(i++)]
+		v[1] = b32c[getB32(i++)]
+		v[2] = b32c[getB32(i++)]
+		v[3] = b32c[getB32(i++)]
+		v[4] = b32c[getB32(i++)]
+		v[5] = b32c[getB32(i++)]
+		v[6] = b32c[getB32(i++)]
+		v[7] = b32c[getB32(i++)]
 
 		buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255
 		buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255
@@ -84,6 +85,7 @@ const b32_buf: call_b32_buf = (
 		buf[idx++] = (v[4] << 7 | v[5] << 2 | v[6] >>> 3) & 255
 		buf[idx++] = (v[6] << 5 | v[7]) & 255
 	}
+
 	switch (rem) {
 		case 2:
 			v[0] = b32c[getB32(i++)]
@@ -130,13 +132,16 @@ const b32_buf: call_b32_buf = (
 
 			break
 	}
-	_v[0] = 0
-	_v[1] = 0
-	return buf
+	try {
+		return buf
+	} finally {
+		_v[0] = 0
+		_v[1] = 0
+	}
 }
 
 // A..Z; 2..7
-const b256:ReadonlyArray<number> = Object.freeze([
+const b256: ReadonlyArray<number> = Object.freeze([
 	65, 66, 67, 68, 69, 70, 71, 72,
 	73, 74, 75, 76, 77, 78, 79, 80,
 	81, 82, 83, 84, 85, 86, 87, 88,
@@ -157,14 +162,14 @@ interface call_buf_b32 {
 }
 const buf_b32: call_buf_b32 = (
 	bv: ArrayBufferView,
-	useString: boolean = false
+	useString = false
 ):any => {
-	const buf:Uint8Array = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength),
-		len:number = buf.length,
-		cnt:number = Math.floor(len / 5) * 5,
-		rem:number = len - cnt,
-		bLen:number = 8 * Math.ceil(buf.length / 5),
-		b32:Uint8Array = new Uint8Array(bLen)
+	const buf = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength),
+		len = buf.byteLength,
+		cnt = floor(len / 5) * 5,
+		rem = len - cnt,
+		bLen = 8 * ceil(len / 5),
+		b32 = useString ? [] : new Uint8Array(bLen)
 
 	let i = 0, idx = 0
 	// 5 bytes are 8 characters
@@ -246,10 +251,13 @@ const buf_b32: call_buf_b32 = (
 
 			break
 	}
-	_v[0] = 0
-	_v[1] = 0
-	if (useString) return b32_toString(b32)
-	else return b32
+	try {
+		if (useString) return b32_toString(b32)
+		else return b32
+	} finally {
+		_v[0] = 0
+		_v[1] = 0
+	}
 }
 export {
 	b32_buf,

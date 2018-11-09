@@ -1,26 +1,22 @@
-import { randomBytes, timingSafeEqual } from 'crypto';
+import { randomBytes, timingSafeEqual, createHash } from 'crypto';
 import { encode, decode } from './b32.mjs';
-function padStart(s, n = 0, c = ' ') {
-    while (s.length < n)
-        s = c + s;
-    return s;
-}
 function test(buf) {
     const s = 'string' === typeof buf
         ? buf
         : String.fromCodePoint(...buf);
-    console.log('%s %j', padStart(s.length.toString(), 5), s.toString());
+    console.log('%s %j', s.length.toString().padStart(5), s);
 }
 const init = process.hrtime();
 function rt(diff = process.hrtime(init)) {
     const tm = (diff[0] + diff[1] / 1000000000);
-    console.log('%sms elapsed', padStart(tm.toFixed(9), 12));
+    console.log('%sms elapsed', tm.toFixed(9).padStart(12));
 }
 const okey = [];
 for (let i = 0; i < 35; i++) {
-    const buf = new Uint8Array(i + 1);
-    for (let j = 0; j < buf.length; j++)
-        buf[j] = j & 1 ? 0x41 : 0x61;
+    let j = i + 1;
+    const buf = new Uint8Array(j);
+    while (j--)
+        buf[j] = 0x41 | (j & 1) << 5;
     okey.push(buf);
 }
 const okay = okey.map(buf => encode(buf));
@@ -50,4 +46,15 @@ const rndb32Decoded = decode(rndb32), rndback = Buffer.from(rndb32Decoded.buffer
 rt();
 test(rndback.toString('hex'));
 console.assert(timingSafeEqual(rndbuf, rndback), 'rndbuf !== rndback');
+rt();
+test(Buffer.from('Testing 20-byte hash sum'));
+const hash = createHash('sha1').update('Hello world!').digest();
+rt();
+test(hash.toString('hex'));
+const hashb32 = encode(hash, true);
+rt();
+test(hashb32);
+const hash32d = decode(hashb32), hashback = Buffer.from(hash32d.buffer, hash32d.byteOffset, hash32d.byteLength);
+rt();
+test(hashback.toString('hex'));
 //# sourceMappingURL=test.mjs.map
