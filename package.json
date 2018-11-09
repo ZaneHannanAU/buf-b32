@@ -1,6 +1,6 @@
 {
   "name": "buf-b32",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "base32 to buffer and buffer to base32 conversions.",
   "main": "dist/b32.js",
   "types": "dist/b32.d.ts",
