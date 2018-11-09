@@ -1,3 +1,4 @@
+declare module "buf-b32" {
 declare const b32c: ReadonlyArray<number>;
 declare const xb: ReadonlyArray<number>;
 interface call_b32_buf {
@@ -15,3 +16,4 @@ interface call_buf_b32 {
 declare const buf_b32: call_buf_b32;
 export { b32_buf, buf_b32, b32_buf as decode, buf_b32 as encode, b32c, b256, xb, };
 //# sourceMappingURL=b32.d.ts.map
+};
