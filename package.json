@@ -5,7 +5,8 @@
   "main": "dist/b32.js",
   "types": "dist/b32.d.ts",
   "scripts": {
-    "test": "node dist/test"
+    "test": "node dist/test",
+    "test-esm": "node --experimental-modules dist/test"
   },
   "repository": {
     "type": "git",
