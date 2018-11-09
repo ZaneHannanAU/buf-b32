@@ -2,8 +2,8 @@
   "name": "buf-b32",
   "version": "2.1.4",
   "description": "base32 to buffer and buffer to base32 conversions.",
-  "main": "dist/b32.js",
-  "types": "index.d.ts",
+  "main": "dist/b32",
+  "types": "dist/b32",
   "scripts": {
     "test": "node dist/test",
     "test-esm": "node --experimental-modules dist/test"
@@ -27,7 +27,6 @@
     "dist/test.mjs.map",
     "dist/test.js.map",
     "dist/test.d.ts",
-    "index.d.ts",
     "README.md"
   ],
   "author": "zeen3",
