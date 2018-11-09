@@ -25,14 +25,7 @@
     "dist/test.mjs.map",
     "dist/test.js.map",
     "dist/test.d.ts",
-    "b32.mjs",
-    "b32.js",
-    "b32.mjs.map",
-    "b32.js.map",
-    "b32.d.ts",
-    "test.mjs.map",
-    "test.js.map",
-    "test.d.ts",
+    "buf-b32.d.ts",
     "README.md"
   ],
   "author": "zeen3",
@@ -42,6 +35,6 @@
   },
   "homepage": "https://github.com/ZaneHannanAU/buf-b32#readme",
   "devDependencies": {
-    "@types/node": "^10.3.4"
+    "@types/node": "^10.12.3"
   }
 }
