@@ -60,6 +60,7 @@ const b32c = Object.freeze({
 });
 const xb = Object.freeze([0, 4, NaN, 3, 2, NaN, 1, NaN]);
 const v = new Uint8Array(8);
+const _v = new Uint32Array(v.buffer, v.byteOffset, 2);
 const getB32S = (s, n) => s.codePointAt(n) || 0;
 const getB32B = (b, n) => b[n] || 0;
 const b32_buf = (b32, overwrite = false) => {
@@ -129,6 +130,8 @@ const b32_buf = (b32, overwrite = false) => {
             buf[idx] = (v[4] << 7 | v[5] << 2 | v[6] >>> 3) & 255;
             break;
     }
+    _v[0] = 0;
+    _v[1] = 0;
     return buf;
 };
 const b256 = Object.freeze([
@@ -208,6 +211,8 @@ const buf_b32 = (bv, useString = false) => {
             b32[idx] = 0x3D;
             break;
     }
+    _v[0] = 0;
+    _v[1] = 0;
     if (useString)
         return b32_toString(b32);
     else
