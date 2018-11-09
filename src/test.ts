@@ -47,7 +47,7 @@ rt()
 test(b32)
 
 const b32Decoded = decode(b32),
-	back = Buffer.from(b32Decoded.buffer, b32Decoded.byteOffset, b32Decoded.byteLength)
+	back = Buffer.from(b32Decoded.buffer as ArrayBuffer, b32Decoded.byteOffset, b32Decoded.byteLength)
 rt()
 test(back)
 
@@ -64,7 +64,7 @@ rt()
 test(rndb32)
 
 const rndb32Decoded = decode(rndb32),
-	rndback = Buffer.from(rndb32Decoded.buffer, rndb32Decoded.byteOffset, rndb32Decoded.byteLength)
+	rndback = Buffer.from(rndb32Decoded.buffer as ArrayBuffer, rndb32Decoded.byteOffset, rndb32Decoded.byteLength)
 
 rt()
 test(rndback.toString('hex'))

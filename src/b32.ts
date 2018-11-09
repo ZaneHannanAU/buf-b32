@@ -3,7 +3,7 @@
  * @enum b32c {number}
  * maps code points to numbers
  */
-const b32c:{[key: number]: number} = {
+const b32c:Readonly<{[key: number]: number}> = Object.freeze({
 	// 2..7
 	'50': 26,
 	'51': 27,
@@ -67,16 +67,20 @@ const b32c:{[key: number]: number} = {
 	'120': 23,
 	'121': 24,
 	'122': 25
-}
+})
 
 // buffered for      0  1    2  3  4    5  6    7
-const xb:number[] = [0, 4, NaN, 3, 2, NaN, 1, NaN]
+const xb:ReadonlyArray<number> = Object.freeze([0, 4, NaN, 3, 2, NaN, 1, NaN])
+
+const v = new Uint8Array(8)
 
 interface call_b32_buf {
 	(b32: ArrayBufferView): Uint8Array;
 	(b32: string): Uint8Array;
 	(b32: string, overwrite: false): Uint8Array;
 }
+const getB32S = (s: string, n: number) => s.codePointAt(n) || 0
+const getB32B = (b: Uint8Array, n: number) => b[n] || 0
 const b32_buf: call_b32_buf = (
 	b32: ArrayBufferView | string,
 	overwrite:boolean = false
@@ -84,8 +88,7 @@ const b32_buf: call_b32_buf = (
 	if (overwrite && 'object' !== typeof b32 && !ArrayBuffer.isView(b32))
 		throw new TypeError(`b32_buf option 'overwrite' cannot be used when b32 is not an ArrayBufferView`)
 
-	const v = new Uint8Array(8),
-		B32:Uint8Array|string = (
+	const B32:Uint8Array|string = (
 			'string' === typeof b32
 			? b32
 			: new Uint8Array(b32.buffer, b32.byteOffset, b32.byteLength)
@@ -106,74 +109,70 @@ const b32_buf: call_b32_buf = (
 			? new Uint8Array(b32.buffer, b32.byteOffset, bLen)
 			: new Uint8Array(bLen)
 		),
-		getB32 = 'string' !== typeof B32
-			? (n:number):number => B32[n]
-			: (n:number):number => Number(B32.codePointAt(n))
+		getB32: ((n: number) => number) = ('string' === typeof B32 ? getB32S : getB32B).bind(null, B32)
 
-	let i = 0, idx = 0, n = 0
+	let i = 0, idx = 0
 
 	// 8 chars = 5 bytes
 	while (i < cnt) {
-		v[n++] = <number>(b32c[getB32(i++)])
-		v[n++] = <number>(b32c[getB32(i++)])
-		v[n++] = <number>(b32c[getB32(i++)])
-		v[n++] = <number>(b32c[getB32(i++)])
-		v[n++] = <number>(b32c[getB32(i++)])
-		v[n++] = <number>(b32c[getB32(i++)])
-		v[n++] = <number>(b32c[getB32(i++)])
-		v[n++] = <number>(b32c[getB32(i++)])
+		v[0] = <number>(b32c[getB32(i++)])
+		v[1] = <number>(b32c[getB32(i++)])
+		v[2] = <number>(b32c[getB32(i++)])
+		v[3] = <number>(b32c[getB32(i++)])
+		v[4] = <number>(b32c[getB32(i++)])
+		v[5] = <number>(b32c[getB32(i++)])
+		v[6] = <number>(b32c[getB32(i++)])
+		v[7] = <number>(b32c[getB32(i++)])
 
 		buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255
 		buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255
 		buf[idx++] = (v[3] << 4 | v[4] >>> 1) & 255
 		buf[idx++] = (v[4] << 7 | v[5] << 2 | v[6] >>> 3) & 255
 		buf[idx++] = (v[6] << 5 | v[7]) & 255
-
-		n = 0
 	}
 	switch (rem) {
 		case 2:
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
+			v[0] = b32c[getB32(i++)]
+			v[1] = b32c[getB32(i)]
 
-			buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255
+			buf[idx] = (v[0] << 3 | v[1] >>> 2) & 255
 
 			break
 		case 4:
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
+			v[0] = b32c[getB32(i++)]
+			v[1] = b32c[getB32(i++)]
+			v[2] = b32c[getB32(i++)]
+			v[3] = b32c[getB32(i)]
 
 			buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255
-			buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255
+			buf[idx] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255
 
 			break
 		case 5:
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-                          
+			v[0] = b32c[getB32(i++)]
+			v[1] = b32c[getB32(i++)]
+			v[2] = b32c[getB32(i++)]
+			v[3] = b32c[getB32(i++)]
+			v[4] = b32c[getB32(i)]
+
 			buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255
 			buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255
-			buf[idx++] = (v[3] << 4 | v[4] >>> 1) & 255
+			buf[idx] = (v[3] << 4 | v[4] >>> 1) & 255
 
 			break
 		case 7:
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
-			v[n++] = b32c[getB32(i++)]
+			v[0] = b32c[getB32(i++)]
+			v[1] = b32c[getB32(i++)]
+			v[2] = b32c[getB32(i++)]
+			v[3] = b32c[getB32(i++)]
+			v[4] = b32c[getB32(i++)]
+			v[5] = b32c[getB32(i++)]
+			v[6] = b32c[getB32(i)]
 
 			buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255
 			buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255
 			buf[idx++] = (v[3] << 4 | v[4] >>> 1) & 255
-			buf[idx++] = (v[4] << 7 | v[5] << 2 | v[6] >>> 3) & 255
+			buf[idx] = (v[4] << 7 | v[5] << 2 | v[6] >>> 3) & 255
 
 			break
 	}
@@ -181,7 +180,19 @@ const b32_buf: call_b32_buf = (
 }
 
 // A..Z; 2..7
-const b256:Uint8Array = new Uint8Array([65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,50,51,52,53,54,55])
+const b256:ReadonlyArray<number> = Object.freeze([
+	65, 66, 67, 68, 69, 70, 71, 72,
+	73, 74, 75, 76, 77, 78, 79, 80,
+	81, 82, 83, 84, 85, 86, 87, 88,
+	89, 90, 50, 51, 52, 53, 54, 55
+])
+interface b32_toString {
+	(b: Uint8Array): string;
+	(ns: number[]): string;
+	(n: ReadonlyArray<number>): string;
+	(z: {length: number; [index: number]: number;}): string;
+}
+const b32_toString: b32_toString = Reflect.apply.bind(null, String.fromCharCode, null)
 
 interface call_buf_b32 {
 	(bv: ArrayBufferView): Uint8Array;
@@ -192,22 +203,21 @@ const buf_b32: call_buf_b32 = (
 	bv: ArrayBufferView,
 	useString: boolean = false
 ):any => {
-	const v:Uint8Array = new Uint8Array(5),
-		buf:Uint8Array = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength),
+	const buf:Uint8Array = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength),
 		len:number = buf.length,
 		cnt:number = Math.floor(len / 5) * 5,
 		rem:number = len - cnt,
 		bLen:number = 8 * Math.ceil(buf.length / 5),
 		b32:Uint8Array = new Uint8Array(bLen)
 
-	let i = 0, idx = 0, n = 0
+	let i = 0, idx = 0
 	// 5 bytes are 8 characters
 	while (i < cnt) {
-		v[n++] = buf[i++]
-		v[n++] = buf[i++]
-		v[n++] = buf[i++]
-		v[n++] = buf[i++]
-		v[n++] = buf[i++]
+		v[0] = buf[i++]
+		v[1] = buf[i++]
+		v[2] = buf[i++]
+		v[3] = buf[i++]
+		v[4] = buf[i++]
 
 		b32[idx++] = b256[v[0] >>> 3]
 		b32[idx++] = b256[(v[0] << 2 | v[1] >>> 6) & 31]
@@ -217,13 +227,11 @@ const buf_b32: call_buf_b32 = (
 		b32[idx++] = b256[(v[3] >>> 2) & 31]
 		b32[idx++] = b256[(v[3] << 3 | v[4] >>> 5) & 31]
 		b32[idx++] = b256[v[4] & 31]
-
-		n = 0
 	}
 
 	switch (rem) {
 		case 1:
-			v[n++] = buf[i++]
+			v[0] = buf[i]
 
 			b32[idx++] = b256[v[0] >>> 3]
 			b32[idx++] = b256[(v[0] << 2) & 31]
@@ -232,12 +240,12 @@ const buf_b32: call_buf_b32 = (
 			b32[idx++] = 0x3D
 			b32[idx++] = 0x3D
 			b32[idx++] = 0x3D
-			b32[idx++] = 0x3D
+			b32[idx] = 0x3D
 
 			break
 		case 2:
-			v[n++] = buf[i++]
-			v[n++] = buf[i++]
+			v[0] = buf[i++]
+			v[1] = buf[i]
 
 			b32[idx++] = b256[v[0] >>> 3]
 			b32[idx++] = b256[(v[0] << 2 | v[1] >>> 6) & 31]
@@ -246,14 +254,14 @@ const buf_b32: call_buf_b32 = (
 			b32[idx++] = 0x3D
 			b32[idx++] = 0x3D
 			b32[idx++] = 0x3D
-			b32[idx++] = 0x3D
+			b32[idx] = 0x3D
 
 			break
 		case 3:
 
-			v[n++] = buf[i++]
-			v[n++] = buf[i++]
-			v[n++] = buf[i++]
+			v[0] = buf[i++]
+			v[1] = buf[i++]
+			v[2] = buf[i]
 
 			b32[idx++] = b256[v[0] >>> 3]
 			b32[idx++] = b256[(v[0] << 2 | v[1] >>> 6) & 31]
@@ -262,14 +270,14 @@ const buf_b32: call_buf_b32 = (
 			b32[idx++] = b256[(v[2] << 1) & 31]
 			b32[idx++] = 0x3D
 			b32[idx++] = 0x3D
-			b32[idx++] = 0x3D
+			b32[idx] = 0x3D
 
 			break
 		case 4:
-			v[n++] = buf[i++]
-			v[n++] = buf[i++]
-			v[n++] = buf[i++]
-			v[n++] = buf[i++]
+			v[0] = buf[i++]
+			v[1] = buf[i++]
+			v[2] = buf[i++]
+			v[3] = buf[i]
 
 			b32[idx++] = b256[v[0] >>> 3]
 			b32[idx++] = b256[(v[0] << 2 | v[1] >>> 6) & 31]
@@ -278,11 +286,11 @@ const buf_b32: call_buf_b32 = (
 			b32[idx++] = b256[(v[2] << 1 | v[3] >>> 7) & 31]
 			b32[idx++] = b256[(v[3] >>> 2) & 31]
 			b32[idx++] = b256[(v[3] << 3) & 31]
-			b32[idx++] = 0x3D
+			b32[idx] = 0x3D
 
 			break
 	}
-	if (useString) return String.fromCodePoint(...b32)
+	if (useString) return b32_toString(b32)
 	else return b32
 }
 export {

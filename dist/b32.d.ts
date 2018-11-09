@@ -1,14 +1,14 @@
-declare const b32c: {
+declare const b32c: Readonly<{
     [key: number]: number;
-};
-declare const xb: number[];
+}>;
+declare const xb: ReadonlyArray<number>;
 interface call_b32_buf {
     (b32: ArrayBufferView): Uint8Array;
     (b32: string): Uint8Array;
     (b32: string, overwrite: false): Uint8Array;
 }
 declare const b32_buf: call_b32_buf;
-declare const b256: Uint8Array;
+declare const b256: ReadonlyArray<number>;
 interface call_buf_b32 {
     (bv: ArrayBufferView): Uint8Array;
     (bv: ArrayBufferView, useString: false): Uint8Array;
