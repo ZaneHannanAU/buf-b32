@@ -1,9 +1,8 @@
 declare const b32c: ReadonlyArray<number>;
 declare const xb: ReadonlyArray<number>;
 interface call_b32_buf {
-    (b32: ArrayBufferView): Uint8Array;
-    (b32: string): Uint8Array;
-    (b32: string, overwrite: false): Uint8Array;
+    (b32: ArrayBufferView, overwrite?: boolean): Uint8Array;
+    (b32: string, overwrite?: false): Uint8Array;
 }
 declare const b32_buf: call_b32_buf;
 declare const b256: ReadonlyArray<number>;

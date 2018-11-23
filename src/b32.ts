@@ -31,7 +31,6 @@ const _v = new Uint32Array(v.buffer, v.byteOffset, 2)
 interface call_b32_buf {
 	(b32: ArrayBufferView, overwrite?: boolean): Uint8Array;
 	(b32: string, overwrite?: false): Uint8Array;
-	(b32: string, overwrite: true): never;
 }
 const getB32S = (s: string, n: number) => s.codePointAt(n) || 0
 const getB32B = (b: Uint8Array, n: number) => b[n] || 0
@@ -147,28 +146,25 @@ const b256: ReadonlyArray<number> = Object.freeze([
 	81, 82, 83, 84, 85, 86, 87, 88,
 	89, 90, 50, 51, 52, 53, 54, 55
 ])
-interface b32_toString {
-	(b: Uint8Array): string;
+interface _toString {
 	(ns: number[]): string;
-	(n: ReadonlyArray<number>): string;
-	(z: {length: number; [index: number]: number;}): string;
+	(ns: Uint8Array): string;
 }
-const b32_toString: b32_toString = Reflect.apply.bind(null, String.fromCharCode, null)
+const _toString: _toString = Reflect.apply.bind(null, String.fromCharCode, null)
 
 interface call_buf_b32 {
-	(bv: ArrayBufferView, useString?: false): Uint8Array;
+	(bv: ArrayBufferView): Uint8Array;
+	(bv: ArrayBufferView, useString: false): Uint8Array;
 	(bv: ArrayBufferView, useString: true): string;
 }
-const buf_b32: call_buf_b32 = (
-	bv: ArrayBufferView,
-	useString = false
-) => {
+const buf_b32: call_buf_b32 = (bv: ArrayBufferView, useString = false): any => {
 	const buf = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength),
 		len = buf.byteLength,
 		cnt = floor(len / 5) * 5,
 		rem = len - cnt,
 		bLen = 8 * ceil(len / 5),
 		b32 = useString ? Array(bLen) : new Uint8Array(bLen)
+	// use an array if we don't want to collect more garbage
 
 	let i = 0, idx = 0
 	// 5 bytes are 8 characters
@@ -250,13 +246,11 @@ const buf_b32: call_buf_b32 = (
 
 			break
 	}
-	try {
-		if (useString) return b32_toString(b32)
-		else return b32
-	} finally {
-		_v[0] = 0
-		_v[1] = 0
-	}
+	_v[0] = 0
+	_v[1] = 0
+	return b32 instanceof Uint8Array
+		? b32
+		: _toString(b32)
 }
 export {
 	b32_buf,

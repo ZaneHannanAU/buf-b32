@@ -45,7 +45,7 @@
             : B32.lastIndexOf('=', B32.length - 1) > -1) ? ArrayBuffer.isView(B32)
             ? B32.indexOf(0x3D, 0)
             : B32.indexOf('=', 0)
-            : B32.length, cnt = len & -8, rem = len - cnt, bLen = 5 * (len >>> 3) + xb[B32.length - len], buf = (overwrite && 'string' !== typeof b32
+            : B32.length, cnt = (len & -8) >>> 0, rem = len - cnt, bLen = 5 * (len >>> 3) + xb[B32.length - len], buf = (overwrite && 'string' !== typeof b32
             ? new Uint8Array(b32.buffer, b32.byteOffset, bLen)
             : new Uint8Array(bLen)), getB32 = ('string' === typeof B32 ? getB32S : getB32B).bind(null, B32);
         let i = 0, idx = 0;
@@ -58,25 +58,25 @@
             v[5] = b32c[getB32(i++)];
             v[6] = b32c[getB32(i++)];
             v[7] = b32c[getB32(i++)];
-            buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255;
-            buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255;
-            buf[idx++] = (v[3] << 4 | v[4] >>> 1) & 255;
-            buf[idx++] = (v[4] << 7 | v[5] << 2 | v[6] >>> 3) & 255;
-            buf[idx++] = (v[6] << 5 | v[7]) & 255;
+            buf[idx++] = v[0] << 3 | v[1] >>> 2;
+            buf[idx++] = v[1] << 6 | v[2] << 1 | v[3] >>> 4;
+            buf[idx++] = v[3] << 4 | v[4] >>> 1;
+            buf[idx++] = v[4] << 7 | v[5] << 2 | v[6] >>> 3;
+            buf[idx++] = v[6] << 5 | v[7];
         }
         switch (rem) {
             case 2:
                 v[0] = b32c[getB32(i++)];
                 v[1] = b32c[getB32(i)];
-                buf[idx] = (v[0] << 3 | v[1] >>> 2) & 255;
+                buf[idx] = v[0] << 3 | v[1] >>> 2;
                 break;
             case 4:
                 v[0] = b32c[getB32(i++)];
                 v[1] = b32c[getB32(i++)];
                 v[2] = b32c[getB32(i++)];
                 v[3] = b32c[getB32(i)];
-                buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255;
-                buf[idx] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255;
+                buf[idx++] = v[0] << 3 | v[1] >>> 2;
+                buf[idx] = v[1] << 6 | v[2] << 1 | v[3] >>> 4;
                 break;
             case 5:
                 v[0] = b32c[getB32(i++)];
@@ -84,9 +84,9 @@
                 v[2] = b32c[getB32(i++)];
                 v[3] = b32c[getB32(i++)];
                 v[4] = b32c[getB32(i)];
-                buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255;
-                buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255;
-                buf[idx] = (v[3] << 4 | v[4] >>> 1) & 255;
+                buf[idx++] = v[0] << 3 | v[1] >>> 2;
+                buf[idx++] = v[1] << 6 | v[2] << 1 | v[3] >>> 4;
+                buf[idx] = v[3] << 4 | v[4] >>> 1;
                 break;
             case 7:
                 v[0] = b32c[getB32(i++)];
@@ -96,10 +96,10 @@
                 v[4] = b32c[getB32(i++)];
                 v[5] = b32c[getB32(i++)];
                 v[6] = b32c[getB32(i)];
-                buf[idx++] = (v[0] << 3 | v[1] >>> 2) & 255;
-                buf[idx++] = (v[1] << 6 | v[2] << 1 | v[3] >>> 4) & 255;
-                buf[idx++] = (v[3] << 4 | v[4] >>> 1) & 255;
-                buf[idx] = (v[4] << 7 | v[5] << 2 | v[6] >>> 3) & 255;
+                buf[idx++] = v[0] << 3 | v[1] >>> 2;
+                buf[idx++] = v[1] << 6 | v[2] << 1 | v[3] >>> 4;
+                buf[idx++] = v[3] << 4 | v[4] >>> 1;
+                buf[idx] = v[4] << 7 | v[5] << 2 | v[6] >>> 3;
                 break;
         }
         try {
@@ -119,9 +119,9 @@
         89, 90, 50, 51, 52, 53, 54, 55
     ]);
     exports.b256 = b256;
-    const b32_toString = Reflect.apply.bind(null, String.fromCharCode, null);
+    const _toString = Reflect.apply.bind(null, String.fromCharCode, null);
     const buf_b32 = (bv, useString = false) => {
-        const buf = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength), len = buf.byteLength, cnt = floor(len / 5) * 5, rem = len - cnt, bLen = 8 * ceil(len / 5), b32 = useString ? [] : new Uint8Array(bLen);
+        const buf = new Uint8Array(bv.buffer, bv.byteOffset, bv.byteLength), len = buf.byteLength, cnt = floor(len / 5) * 5, rem = len - cnt, bLen = 8 * ceil(len / 5), b32 = useString ? Array(bLen) : new Uint8Array(bLen);
         let i = 0, idx = 0;
         while (i < cnt) {
             v[0] = buf[i++];
@@ -190,16 +190,11 @@
                 b32[idx] = 0x3D;
                 break;
         }
-        try {
-            if (useString)
-                return b32_toString(b32);
-            else
-                return b32;
-        }
-        finally {
-            _v[0] = 0;
-            _v[1] = 0;
-        }
+        _v[0] = 0;
+        _v[1] = 0;
+        return b32 instanceof Uint8Array
+            ? b32
+            : _toString(b32);
     };
     exports.buf_b32 = buf_b32;
     exports.encode = buf_b32;
